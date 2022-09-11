@@ -1,11 +1,12 @@
 
-FROM alpine:3.16.2
-ARG sep="======================================="
-RUN apk add neovim && echo $sep INSTALLED NEOVIM $sep
-RUN mkdir -p /root/.config/nvim
-COPY ./init.* /root/.config/nvim/
-COPY ./config.sh /root/.config/nvim/
-RUN echo $sep IMPORTED CONFIGS $sep
-RUN chmod +x /root/.config/nvim/config.sh
-RUN /root/.config/nvim/config.sh && echo $sep CONFIGURATION SUCCESS $sep
+FROM alpine:latest
+RUN adduser -D user
+WORKDIR /home/user
+RUN apk add neovim git
+RUN mkdir -p /home/user/.config/nvim
+COPY ./config/* /home/user/.config
+RUN chmod +x /home/user/.config/config.sh
+RUN chmod -R 777 /home/user/.config
+USER user
+RUN /home/user/.config/config.sh
 ENTRYPOINT nvim
